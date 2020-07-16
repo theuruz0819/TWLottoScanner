@@ -18,5 +18,11 @@ class Lotto649OpenedNumber(
         return text
     }
 
+    fun isNumberMatch(number: Int): Boolean{
+        if (numbers.contains(number)){
+            return true
+        } else return sp_number == number
+    }
+
     constructor() : this(ArrayList<Int>(), 0, "")
 }

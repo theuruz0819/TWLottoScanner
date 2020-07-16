@@ -42,7 +42,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
     private var numbersList = ArrayList<Lotto649>()
     private lateinit var adapter: ResultListAdapter
     val db = FirebaseFirestore.getInstance()
-    lateinit var targetNumber: Lotto649OpenedNumber
+    var targetNumber: Lotto649OpenedNumber? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
 
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
-        adapter = ResultListAdapter(this, numbersList)
+        adapter = ResultListAdapter(targetNumber, numbersList)
         val manger = LinearLayoutManager(this)
         manger.orientation = LinearLayoutManager.VERTICAL
         result_list.layoutManager = manger
@@ -73,16 +73,15 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
                 term_result_text_view.text = "輸入或掃描期號後開始對獎"
             }
         }
-
     }
 
     fun matchup(){
         db.collection("lotto649").document(tern_number_edt.text.toString()).get()
             .addOnSuccessListener { result ->
-                var num = result.toObject(Lotto649OpenedNumber::class.java)
-                if (num != null) {
-                    term_result_text_view.text = num.getTextFromResult()
-                    Log.d("TAG", num.sp_number.toString())
+                targetNumber = result.toObject(Lotto649OpenedNumber::class.java)
+                if (targetNumber != null) {
+                    term_result_text_view.text = targetNumber!!.getTextFromResult()
+                    Log.d("TAG", targetNumber!!.sp_number.toString())
                 } else {
                     term_result_text_view.text = "沒有此期別獎號資料"
                     Log.d("TAG", "no result")

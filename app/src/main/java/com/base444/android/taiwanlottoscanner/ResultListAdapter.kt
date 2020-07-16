@@ -1,6 +1,5 @@
 package com.base444.android.taiwanlottoscanner
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +8,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.base444.android.taiwanlottoscanner.model.Lotto649
+import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
 
 
-class ResultListAdapter(val context: Context,val numbersList: ArrayList<Lotto649>):
+class ResultListAdapter(
+    var targetNumber: Lotto649OpenedNumber?,
+    val numbersList: ArrayList<Lotto649>):
     RecyclerView.Adapter<ResultListItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListItemViewHolder {
@@ -24,14 +26,14 @@ class ResultListAdapter(val context: Context,val numbersList: ArrayList<Lotto649
     }
 
     override fun onBindViewHolder(holder: ResultListItemViewHolder, position: Int) {
-        holder?.bind(numbersList.get(position))
+        holder?.bind(numbersList.get(position), targetNumber)
     }
 
 }
 class ResultListItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val firstArea = itemView?.findViewById<LinearLayout>(R.id.number_list_first_area)
 
-    fun bind(lotto: Lotto649) {
+    fun bind(lotto: Lotto649, targetNumber: Lotto649OpenedNumber?) {
         firstArea.removeAllViews()
         for (number in lotto.numbers){
             val value = TextView(itemView.context)
@@ -43,6 +45,16 @@ class ResultListItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
             value.setPadding(30,5,30,5)
             value.setTextColor(Color.BLACK)
             value.textSize = 25f
+
+            if (targetNumber != null) {
+                if (targetNumber.isNumberMatch(number)){
+                    value.setTextColor(Color.CYAN)
+                } else {
+                    value.setTextColor(Color.BLACK)
+                }
+            } else {
+                value.setTextColor(Color.BLACK)
+            }
 
             firstArea.addView(value)
         }
