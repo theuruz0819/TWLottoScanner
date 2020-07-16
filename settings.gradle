@@ -1,0 +1,2 @@
+rootProject.name='TaiwanLottoScanner'
+include ':app'
