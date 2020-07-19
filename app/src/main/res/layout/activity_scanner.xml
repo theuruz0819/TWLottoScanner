@@ -45,15 +45,26 @@
                 android:layout_toStartOf="@+id/term_number_toggle"
                 android:layout_toEndOf="@+id/term_edt_header"
                 android:layout_margin="2dp"
+                android:lines="1"
+                android:inputType="numberDecimal"
                 />
-            <ToggleButton
+            <CheckBox
                 android:id="@+id/term_number_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textOn="期別重設"
-                android:textOff="開始對獎"
-                android:layout_alignParentEnd="true"
+                android:text="期別掃描"
+                android:checked="true"
+                android:layout_toStartOf="@+id/term_number_info"
                 android:layout_margin="3dp"
+                />
+            <ImageView
+                android:id="@+id/term_number_info"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="3dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/ic_info"
+                android:scaleType="centerCrop"
                 />
         </RelativeLayout>
         <TextView

@@ -19,9 +19,10 @@ class Lotto649OpenedNumber(
     }
 
     fun isNumberMatch(number: Int): Boolean{
-        if (numbers.contains(number)){
-            return true
-        } else return sp_number == number
+        return numbers.contains(number)
+    }
+    fun isSpNumberMatch(number: Int): Boolean{
+        return number == sp_number
     }
 
     constructor() : this(ArrayList<Int>(), 0, "")

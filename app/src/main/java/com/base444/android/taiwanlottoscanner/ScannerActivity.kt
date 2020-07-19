@@ -19,7 +19,9 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
 import com.google.firebase.firestore.FirebaseFirestore
@@ -36,10 +38,9 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
 
-    private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
 
-    private var numbersList = ArrayList<Lotto649>()
+    private var numbersList = ArrayList<BaseLotto>()
     private lateinit var adapter: ResultListAdapter
     val db = FirebaseFirestore.getInstance()
     var targetNumber: Lotto649OpenedNumber? = null
@@ -58,21 +59,18 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
             )
         }
 
-        outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
         adapter = ResultListAdapter(targetNumber, numbersList)
         val manger = LinearLayoutManager(this)
         manger.orientation = LinearLayoutManager.VERTICAL
         result_list.layoutManager = manger
         result_list.adapter = adapter
-
-        term_number_toggle.setOnCheckedChangeListener { compoundButton, isCheck ->
-            if(isCheck){
+        tern_number_edt.doAfterTextChanged {
+            if(it.toString().length == 9){
                 matchup()
-            } else {
-                term_result_text_view.text = "輸入或掃描期號後開始對獎"
             }
         }
+
     }
 
     fun matchup(){
@@ -82,6 +80,8 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
                 if (targetNumber != null) {
                     term_result_text_view.text = targetNumber!!.getTextFromResult()
                     Log.d("TAG", targetNumber!!.sp_number.toString())
+                    adapter.targetNumber = targetNumber
+                    adapter.notifyDataSetChanged()
                 } else {
                     term_result_text_view.text = "沒有此期別獎號資料"
                     Log.d("TAG", "no result")
@@ -108,7 +108,6 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
     }
 
     private fun startCamera() {
-
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -155,13 +154,6 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
             baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
-    }
-
     companion object {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -200,8 +192,10 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
                     try {
                         var termNumber = line.text.substring(line.text.indexOf('#') + 1, line.text.indexOf('#') + 10)
                         if (TextUtils.isDigitsOnly(termNumber)){
-                            if (!term_number_toggle.isChecked){
-                                tern_number_edt.setText(termNumber)
+                            if (term_number_toggle.isChecked){
+                                if (termNumber != tern_number_edt.text.toString()){
+                                    tern_number_edt.setText(termNumber)
+                                }
                             }
                         }
                     } catch (e: Exception){
