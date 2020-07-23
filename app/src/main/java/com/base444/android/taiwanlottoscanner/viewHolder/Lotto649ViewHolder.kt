@@ -1,40 +1,20 @@
-package com.base444.android.taiwanlottoscanner
+package com.base444.android.taiwanlottoscanner.viewHolder
 
 import android.graphics.Color
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import com.base444.android.taiwanlottoscanner.adapter.BaseLottoResultViewHolder
+import com.base444.android.taiwanlottoscanner.R
 import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
 
-
-class ResultListAdapter(
-    var targetNumber: Lotto649OpenedNumber?,
-    val numbersList: ArrayList<BaseLotto>):
-    RecyclerView.Adapter<ResultListItemViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListItemViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.result_list_item, parent, false)
-        return ResultListItemViewHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return numbersList.size
-    }
-
-    override fun onBindViewHolder(holder: ResultListItemViewHolder, position: Int) {
-        holder?.bind(numbersList.get(position), targetNumber)
-    }
-
-}
-class ResultListItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    private val firstArea: LinearLayout = itemView?.findViewById<LinearLayout>(R.id.number_list_first_area)
-
-    fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?) {
+class Lotto649ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
+    private val firstArea: LinearLayout = itemView.findViewById<LinearLayout>(R.id.number_list_first_area)
+    override fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?) {
         if(lotto is Lotto649){
             firstArea.removeAllViews()
             for (number in lotto.numbers){
@@ -63,9 +43,12 @@ class ResultListItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
                 } else {
                     value.setTextColor(Color.BLACK)
                 }
-
                 firstArea.addView(value)
             }
         }
+    }
+
+    override fun setDeletedListener(listener: View.OnClickListener) {
+        itemView.findViewById<ImageView>(R.id.number_list_remove_ic).setOnClickListener(listener)
     }
 }

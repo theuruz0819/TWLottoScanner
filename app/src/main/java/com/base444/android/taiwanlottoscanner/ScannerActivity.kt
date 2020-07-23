@@ -21,13 +21,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.base444.android.taiwanlottoscanner.adapter.ResultListAdapter
 import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.mlkit.vision.text.Text
 import kotlinx.android.synthetic.main.activity_scanner.*
-import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -60,7 +60,11 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-        adapter = ResultListAdapter(targetNumber, numbersList)
+        adapter =
+            ResultListAdapter(
+                targetNumber,
+                numbersList
+            )
         val manger = LinearLayoutManager(this)
         manger.orientation = LinearLayoutManager.VERTICAL
         result_list.layoutManager = manger

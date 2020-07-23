@@ -37,7 +37,6 @@ class CodeImageAnalyzer(var onResult: OnResultReturn) : ImageAnalysis.Analyzer {
                     // ...
                     imageProxy.close()
                 }
-
             // below are barcode
             //barcode(image, imageProxy)
         }
