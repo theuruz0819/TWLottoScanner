@@ -4,7 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.base444.android.taiwanlottoscanner.LottoTextProcessor
 import com.base444.android.taiwanlottoscanner.R
 import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
@@ -12,10 +14,14 @@ import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
 import com.base444.android.taiwanlottoscanner.viewHolder.Lotto649ViewHolder
 import com.google.mlkit.vision.text.Text
 
-class ResultListAdapter(var targetNumber: Lotto649OpenedNumber?,
-    val numbersList: ArrayList<BaseLotto>):
-
+class ResultListAdapter(
+    var targetNumber: Lotto649OpenedNumber?,
+    val numbersList: ArrayList<BaseLotto>,
+    var showDialogInterface: ShowDialogInterface):
     RecyclerView.Adapter<BaseLottoResultViewHolder>() {
+    interface ShowDialogInterface{
+        fun showDialog(text: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseLottoResultViewHolder {
         if (viewType == LOTTO649){
@@ -37,6 +43,15 @@ class ResultListAdapter(var targetNumber: Lotto649OpenedNumber?,
             numbersList.removeAt(position)
             notifyDataSetChanged()
         })
+        holder.setOnClickListener(View.OnClickListener {
+            var returnText = ""
+            when(getItemViewType(position)){
+                LOTTO649 ->{
+                    returnText = LottoTextProcessor.lotto649PriceText(numbersList.get(position) as Lotto649, targetNumber)
+                }
+            }
+            showDialogInterface.showDialog(returnText)
+        })
     }
     override fun getItemViewType(position: Int): Int {
         if (numbersList.get(position) is Lotto649){
@@ -55,13 +70,14 @@ class ResultListAdapter(var targetNumber: Lotto649OpenedNumber?,
 abstract class BaseLottoResultViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
     abstract fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?)
     abstract fun setDeletedListener(listener: View.OnClickListener)
+    abstract fun setOnClickListener(listener: View.OnClickListener)
 }
 
 class KnowViewHolder(itemView: View): BaseLottoResultViewHolder(itemView) {
     override fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?) {
     }
-
     override fun setDeletedListener(listener: View.OnClickListener) {
-
+    }
+    override fun setOnClickListener(listener: View.OnClickListener) {
     }
 }

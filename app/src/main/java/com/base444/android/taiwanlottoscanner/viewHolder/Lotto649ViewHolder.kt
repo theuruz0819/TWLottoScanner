@@ -26,7 +26,7 @@ class Lotto649ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
                 )
                 value.setPadding(30,5,30,5)
                 value.setTextColor(Color.BLACK)
-                value.textSize = 25f
+                value.textSize = 20f
 
                 if (targetNumber != null) {
                     when {
@@ -50,5 +50,9 @@ class Lotto649ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
 
     override fun setDeletedListener(listener: View.OnClickListener) {
         itemView.findViewById<ImageView>(R.id.number_list_remove_ic).setOnClickListener(listener)
+    }
+
+    override fun setOnClickListener(listener: View.OnClickListener) {
+        firstArea.setOnClickListener(listener)
     }
 }

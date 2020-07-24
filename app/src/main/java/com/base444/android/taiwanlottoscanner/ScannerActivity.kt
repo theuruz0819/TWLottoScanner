@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.Size
 import android.view.Window
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -32,7 +33,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
+class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
+    LottoTextProcessor.OnTextProcessInterface, ResultListAdapter.ShowDialogInterface {
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -63,7 +65,8 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
         adapter =
             ResultListAdapter(
                 targetNumber,
-                numbersList
+                numbersList,
+                this
             )
         val manger = LinearLayoutManager(this)
         manger.orientation = LinearLayoutManager.VERTICAL
@@ -77,7 +80,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
 
     }
 
-    fun matchup(){
+    private fun matchup(){
         db.collection("lotto649").document(tern_number_edt.text.toString()).get()
             .addOnSuccessListener { result ->
                 targetNumber = result.toObject(Lotto649OpenedNumber::class.java)
@@ -123,7 +126,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
-            preview = Preview.Builder().setTargetResolution(Size(1280, 960))
+            preview = Preview.Builder().setTargetResolution(Size(960, 1280))
                 .build()
             // Select back camera
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
@@ -132,7 +135,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
                 imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetResolution(Size(1280, 960))
+                .setTargetResolution(Size(960 , 1280))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 // Bind use cases to camera
@@ -174,41 +177,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
     }
 
     override fun onResult(visionText: Text) {
-        for (block in visionText.textBlocks) {
-            for (line in block.lines) {
-                var numbers = ArrayList<Int>()
-                for (element in line.elements) {
-                    var text = element.text
-                    if (text.contains(')')){
-                        text =  text.substring(text.indexOf(')'))
-                    }
-                    if (isLotteNumber(element.text) && !numbers.contains(element.text.toInt())){
-                        numbers.add(element.text.toInt())
-                    }
-                }
-                if (numbers.size == 6){
-                    var lotto = Lotto649(numbers, "", "", false)
-                    if (!numbersList.contains(lotto)){
-                        numbersList.add(lotto)
-                    }                                                                 
-                }
-                if(line.text.contains('#')){
-                    try {
-                        var termNumber = line.text.substring(line.text.indexOf('#') + 1, line.text.indexOf('#') + 10)
-                        if (TextUtils.isDigitsOnly(termNumber)){
-                            if (term_number_toggle.isChecked){
-                                if (termNumber != tern_number_edt.text.toString()){
-                                    tern_number_edt.setText(termNumber)
-                                }
-                            }
-                        }
-                    } catch (e: Exception){
-                        Log.e(TAG, e.message)
-                    }
-                }
-            }
-        }
-        adapter.notifyDataSetChanged()
+        LottoTextProcessor.processLotto649Numbers(visionText, this)
     }
     private fun isLotteNumber(text: String): Boolean{
         if (text.length == 2) {
@@ -219,6 +188,27 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn {
             }
         }
         return false
+    }
+
+    override fun updateTermTextView(termNumber: String) {
+        if (term_number_toggle.isChecked){
+            if (termNumber != tern_number_edt.text.toString()){
+                tern_number_edt.setText(termNumber)
+            }
+        }
+    }
+
+    override fun addLottoNumber(lotto: BaseLotto) {
+        if (!numbersList.contains(lotto)){
+            numbersList.add(lotto)
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun showDialog(text: String) {
+        AlertDialog.Builder(this)
+            .setMessage(text)
+            .show()
     }
 
 }
