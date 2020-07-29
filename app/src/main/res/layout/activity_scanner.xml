@@ -7,13 +7,27 @@
     tools:context=".ScannerActivity"
     android:orientation="vertical"
     android:weightSum="10">
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        app:scaleType="fitCenter"
-        />
+        >
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:scaleType="fitCenter"
+            />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_rawRes="@raw/sanning"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

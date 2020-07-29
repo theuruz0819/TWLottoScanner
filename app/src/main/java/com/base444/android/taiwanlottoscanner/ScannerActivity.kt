@@ -39,6 +39,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
+    private var mode: String  = "DEF"
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -51,7 +52,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_scanner)
-
+        mode = intent.getStringExtra(MODE)
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
@@ -150,12 +151,6 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun startAnalyz(){
-        startCamera()
-    }
-    private fun stopAnalyz() {
-        //imageAnalyzer?.clearAnalyzer()
-    }
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it) == PackageManager.PERMISSION_GRANTED
@@ -166,7 +161,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        private val MODE = "mode"
+        val MODE = "mode"
 
         @JvmStatic
         fun startActivity(context: Context, mode:String){
@@ -177,17 +172,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
     }
 
     override fun onResult(visionText: Text) {
-        LottoTextProcessor.processLotto649Numbers(visionText, this)
-    }
-    private fun isLotteNumber(text: String): Boolean{
-        if (text.length == 2) {
-            if(text.toIntOrNull() == null){
-                return false
-            } else if (text.toIntOrNull()!! in 1..49) {
-                return true
-            }
-        }
-        return false
+        LottoTextProcessor.processLottoNumbers(visionText, this, mode)
     }
 
     override fun updateTermTextView(termNumber: String) {

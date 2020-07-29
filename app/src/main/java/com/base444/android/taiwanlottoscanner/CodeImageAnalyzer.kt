@@ -19,9 +19,7 @@ class CodeImageAnalyzer(var onResult: OnResultReturn) : ImageAnalysis.Analyzer {
 
     @SuppressLint("UnsafeExperimentalUsageError")
     override fun analyze(imageProxy: ImageProxy) {
-        Log.e("CodeImageAnalyzer", "analyze")
         val mediaImage = imageProxy.image
-        Log.e("CodeImageAnalyzer", mediaImage?.width.toString() + " " + mediaImage?.height.toString())
         if (mediaImage != null) {
             val inputimage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
