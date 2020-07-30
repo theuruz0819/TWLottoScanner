@@ -9,19 +9,21 @@ fun processSuperLotto638Numbers(visionText: Text, processInterface: LottoTextPro
     for (block in visionText.textBlocks) {
         for (line in block.lines) {
             var lineText = line.text
+            var aBlockNumberList = ArrayList<Int>()
+            var bBlockNumberList = ArrayList<Int>()
+            //Log.e(LottoTextProcessor.TAG, lineText)
             for (element in line.elements) {
                 var text = element.text
                 text = text.replace("O", "0")
                 if (lineText.contains('A') && isSupperLotteNumberA(text)){
-                    Log.e(LottoTextProcessor.TAG, " A : " + text + element.boundingBox.toString())
+                    aBlockNumberList.add(text.toInt())
                 } else if (lineText.contains('B')){
                     val replace = text.toString().replace("B", "")
                     if(isSupperLotteNumberB(replace)){
-                        Log.e(LottoTextProcessor.TAG, " B : " + replace)
+                        bBlockNumberList.add(replace.toInt())
                     }
                 }
             }
-
             if(line.text.contains('#')){
                 try {
                     var termNumber = line.text.substring(line.text.indexOf('#') + 1, line.text.indexOf('#') + 10)
@@ -29,11 +31,13 @@ fun processSuperLotto638Numbers(visionText: Text, processInterface: LottoTextPro
                         processInterface.updateTermTextView(termNumber)
                     }
                 } catch (e: Exception){
-                    Log.e(LottoTextProcessor.TAG, e.message)
+                    //Log.e(LottoTextProcessor.TAG, e.message)
                 }
             }
+            Log.e(LottoTextProcessor.TAG, aBlockNumberList.toString() + bBlockNumberList.toString())
         }
     }
+
 }
 
 private fun isSupperLotteNumberA(text: String): Boolean{

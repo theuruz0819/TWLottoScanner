@@ -25,4 +25,12 @@ class Lotto649(
             return false
         }
     }
+
+    override fun hashCode(): Int {
+        var result = numbers.hashCode()
+        result = 31 * result + date.hashCode()
+        result = 31 * result + term.hashCode()
+        result = 31 * result + isMAtch.hashCode()
+        return result
+    }
 }
