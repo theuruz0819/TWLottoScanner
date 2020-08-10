@@ -7,6 +7,7 @@ class SuperLotte638(
     var aBlocknumbers: List<Int>, var bBlocknumbers: List<Int>, override var date: String, override var term: String, override var isMAtch: Boolean
 )  : BaseLotto(date, term, isMAtch){
 
+
     fun getNumberString(): String{
         var string = ""
         for (number in aBlocknumbers){
