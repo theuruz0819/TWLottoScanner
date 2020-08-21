@@ -161,8 +161,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
     }
 
     companion object {
-        private const val TAG = "CameraXBasic"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val TAG = "CameraBasic"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         val MODE = "mode"
@@ -176,8 +175,7 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
     }
 
     override fun onResult(visionText: Text) {
-        //LottoTextProcessor.processLottoNumbers(visionText, this, mode)
-        devProcessSuperLotto638Numbers(visionText)
+        LottoTextProcessor.processLottoNumbers(visionText, this, mode)
     }
 
     override fun updateTermTextView(termNumber: String) {

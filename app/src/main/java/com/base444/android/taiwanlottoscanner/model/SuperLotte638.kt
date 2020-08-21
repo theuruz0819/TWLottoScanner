@@ -23,8 +23,6 @@ class SuperLotte638(
         if (other is SuperLotte638){
             if(!other.aBlocknumbers.size.equals(this.aBlocknumbers.size)){
                 return false
-            } else if (!other.bBlocknumbers.size.equals(this.bBlocknumbers.size)){
-                return false
             }
             return other.getNumberString().equals(this.getNumberString())
         } else {

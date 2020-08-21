@@ -3,6 +3,7 @@ package com.base444.android.taiwanlottoscanner
 import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
+import com.base444.android.taiwanlottoscanner.model.LottoTargetNumber
 import com.base444.android.taiwanlottoscanner.model.pool.LottoNumberGridPool
 import com.google.mlkit.vision.text.Text
 
@@ -24,8 +25,8 @@ object LottoTextProcessor {
         }
     }
 
-    fun lottoPriceText(lotto649: Lotto649, targetNumber: Lotto649OpenedNumber?, mode: String): String {
-        if (mode.equals(MODE_649)) {
+    fun lottoPriceText(lotto649: Lotto649, targetNumber: LottoTargetNumber?, mode: String): String {
+        if (mode.equals(MODE_649) && targetNumber is Lotto649OpenedNumber) {
             return lotto649PriceText(lotto649, targetNumber)
         }
         return ""
