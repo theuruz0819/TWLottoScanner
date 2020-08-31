@@ -8,16 +8,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.base444.android.taiwanlottoscanner.R
 import com.base444.android.taiwanlottoscanner.adapter.BaseLottoResultViewHolder
-import com.base444.android.taiwanlottoscanner.model.BaseLotto
-import com.base444.android.taiwanlottoscanner.model.Lotto649
-import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
-import com.base444.android.taiwanlottoscanner.model.SuperLotte638
+import com.base444.android.taiwanlottoscanner.model.*
 
 class SuperLotto638ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
 
     private val firstArea: LinearLayout = itemView.findViewById<LinearLayout>(R.id.number_list_first_area)
 
-    override fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?) {
+    override fun bind(lotto: BaseLotto, targetNumber: LottoTargetNumber?) {
+
         if(lotto is SuperLotte638){
             firstArea.removeAllViews()
             for (number in lotto.aBlocknumbers){
@@ -32,20 +30,9 @@ class SuperLotto638ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemVi
                 value.textSize = 20f
 
                 if (targetNumber != null) {
-                    when {
-                        targetNumber.isNumberMatch(number) -> {
-                            value.setTextColor(Color.CYAN)
-                        }
-                        targetNumber.isSpNumberMatch(number) -> {
-                            value.setTextColor(Color.RED)
-                        }
-                        else -> {
-                            value.setTextColor(Color.BLACK)
-                        }
-                    }
-                } else {
                     value.setTextColor(Color.BLACK)
                 }
+
                 firstArea.addView(value)
             }
         }

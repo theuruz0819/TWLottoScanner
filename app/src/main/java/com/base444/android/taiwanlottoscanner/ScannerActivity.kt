@@ -82,7 +82,6 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
                 matchup()
             }
         }
-
     }
 
     private fun matchup(){
