@@ -4,6 +4,8 @@ import android.text.TextUtils
 import android.util.Log
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
+import com.base444.android.taiwanlottoscanner.model.SuperLotte638
+import com.base444.android.taiwanlottoscanner.model.SuperLotto638OpenedNumber
 import com.google.mlkit.vision.text.Text
 
     fun processLotto649Numbers(visionText: Text, processInterface: LottoTextProcessor.OnTextProcessInterface){
@@ -112,6 +114,21 @@ import com.google.mlkit.vision.text.Text
             6 ->{
                 return "頭獎"
             }
+        }
+        return "沒中獎"
+    }
+
+    fun lotto638riceText(lotto : SuperLotte638, openedNumber: SuperLotto638OpenedNumber?) : String{
+        var matchNumberCount = 0
+        for(number in lotto.aBlocknumbers){
+            if (openedNumber != null) {
+                if (openedNumber.isNumberMatch(number)){
+                    matchNumberCount ++
+                }
+            }
+        }
+        if(matchNumberCount > 0){
+            return "A區號碼對中" + matchNumberCount.toString() + "個"
         }
         return "沒中獎"
     }

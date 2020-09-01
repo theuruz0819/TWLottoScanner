@@ -11,10 +11,11 @@ import com.base444.android.taiwanlottoscanner.R
 import com.base444.android.taiwanlottoscanner.model.BaseLotto
 import com.base444.android.taiwanlottoscanner.model.Lotto649
 import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
+import com.base444.android.taiwanlottoscanner.model.LottoTargetNumber
 
 class Lotto649ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
     private val firstArea: LinearLayout = itemView.findViewById<LinearLayout>(R.id.number_list_first_area)
-    override fun bind(lotto: BaseLotto, targetNumber: Lotto649OpenedNumber?) {
+    override fun bind(lotto: BaseLotto, targetNumber: LottoTargetNumber?) {
         if(lotto is Lotto649){
             firstArea.removeAllViews()
             for (number in lotto.numbers){
@@ -28,7 +29,7 @@ class Lotto649ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemView) {
                 value.setTextColor(Color.BLACK)
                 value.textSize = 20f
 
-                if (targetNumber != null) {
+                if (targetNumber != null && targetNumber is Lotto649OpenedNumber) {
                     when {
                         targetNumber.isNumberMatch(number) -> {
                             value.setTextColor(Color.CYAN)

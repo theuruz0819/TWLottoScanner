@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.base444.android.taiwanlottoscanner.LottoTextProcessor
+import com.base444.android.taiwanlottoscanner.LottoTextProcessor.MODE_638
 import com.base444.android.taiwanlottoscanner.LottoTextProcessor.MODE_649
 import com.base444.android.taiwanlottoscanner.R
 import com.base444.android.taiwanlottoscanner.model.*
@@ -51,6 +52,9 @@ class ResultListAdapter(
             when(getItemViewType(position)){
                 LOTTO649 ->{
                     returnText = LottoTextProcessor.lottoPriceText(numbersList.get(position) as Lotto649, targetNumber, MODE_649)
+                }
+                SUPPERLOTTO ->{
+                    returnText = LottoTextProcessor.lottoPriceText(numbersList.get(position) as SuperLotte638, targetNumber, MODE_638)
                 }
             }
             showDialogInterface.showDialog(returnText)

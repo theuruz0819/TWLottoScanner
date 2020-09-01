@@ -4,6 +4,7 @@ import android.graphics.Color
 
 class SuperLotto638OpenedNumber(
     val numbers: ArrayList<Int>,
+    val bBlockNumber: Int,
     val date: String
 ) : LottoTargetNumber() {
 
@@ -12,6 +13,7 @@ class SuperLotto638OpenedNumber(
         for (number in numbers){
             text = text + " " + number.toString().padStart(2, '0')
         }
+        text = text + "   B區 : " + bBlockNumber.toString().padStart(2, '0')
         text = "$text \n 日期 : $date"
         return text
     }
@@ -26,5 +28,5 @@ class SuperLotto638OpenedNumber(
     fun isNumberMatch(number: Int): Boolean{
         return numbers.contains(number)
     }
-    constructor() : this(ArrayList<Int>(),"")
+    constructor() : this(ArrayList<Int>(), 0,"")
 }

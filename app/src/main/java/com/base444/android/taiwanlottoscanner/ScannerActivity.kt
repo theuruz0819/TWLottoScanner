@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
@@ -22,11 +21,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.base444.android.taiwanlottoscanner.LottoTextProcessor.MODE_638
+import com.base444.android.taiwanlottoscanner.LottoTextProcessor.MODE_649
 import com.base444.android.taiwanlottoscanner.adapter.ResultListAdapter
-import com.base444.android.taiwanlottoscanner.model.BaseLotto
-import com.base444.android.taiwanlottoscanner.model.Lotto649
-import com.base444.android.taiwanlottoscanner.model.Lotto649OpenedNumber
-import com.base444.android.taiwanlottoscanner.model.pool.LottoNumberGridPool
+import com.base444.android.taiwanlottoscanner.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.mlkit.vision.text.Text
 import kotlinx.android.synthetic.main.activity_scanner.*
@@ -47,15 +45,13 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
     private var numbersList = ArrayList<BaseLotto>()
     private lateinit var adapter: ResultListAdapter
     val db = FirebaseFirestore.getInstance()
-    var targetNumber: Lotto649OpenedNumber? = null
+    var targetNumber: LottoTargetNumber? = null
 
-    var pool: LottoNumberGridPool = LottoNumberGridPool()
-    var devCounter = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_scanner)
-        pool.initial()
         mode = intent.getStringExtra(MODE)
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -79,28 +75,45 @@ class ScannerActivity : AppCompatActivity(), CodeImageAnalyzer.OnResultReturn,
         result_list.adapter = adapter
         tern_number_edt.doAfterTextChanged {
             if(it.toString().length == 9){
-                matchup()
+                matchUp()
             }
         }
     }
 
-    private fun matchup(){
-        db.collection("lotto649").document(tern_number_edt.text.toString()).get()
-            .addOnSuccessListener { result ->
-                targetNumber = result.toObject(Lotto649OpenedNumber::class.java)
-                if (targetNumber != null) {
-                    term_result_text_view.text = targetNumber!!.getTextFromResult()
-                    Log.d("TAG", targetNumber!!.sp_number.toString())
-                    adapter.targetNumber = targetNumber
-                    adapter.notifyDataSetChanged()
-                } else {
-                    term_result_text_view.text = "沒有此期別獎號資料"
-                    Log.d("TAG", "no result")
+    private fun matchUp(){
+        if(mode.equals(MODE_649)){
+            db.collection("lotto649").document(tern_number_edt.text.toString()).get()
+                .addOnSuccessListener { result ->
+                    targetNumber = result.toObject(Lotto649OpenedNumber::class.java)
+                    if (targetNumber != null && targetNumber is Lotto649OpenedNumber) {
+                        term_result_text_view.text = targetNumber!!.getTextFromResult()
+                        adapter.targetNumber = targetNumber
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        term_result_text_view.text = "沒有此期別獎號資料"
+                        Log.d("TAG", "no result")
+                    }
                 }
-            }
-            .addOnFailureListener {
-                Log.e(TAG,"Cancel")
-            }
+                .addOnFailureListener {
+                    Log.e(TAG,"Cancel")
+                }
+        } else if (mode.equals(MODE_638)){
+            db.collection("lotto638").document(tern_number_edt.text.toString()).get()
+                .addOnSuccessListener { result ->
+                    targetNumber = result.toObject(SuperLotto638OpenedNumber::class.java)
+                    if (targetNumber != null && targetNumber is SuperLotto638OpenedNumber) {
+                        term_result_text_view.text = targetNumber!!.getTextFromResult()
+                        adapter.targetNumber = targetNumber
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        term_result_text_view.text = "沒有此期別獎號資料"
+                        Log.d("TAG", "no result")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG,"Cancel")
+                }
+        }
     }
 
     override fun onRequestPermissionsResult(

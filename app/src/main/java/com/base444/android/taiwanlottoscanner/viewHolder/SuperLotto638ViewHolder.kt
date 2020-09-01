@@ -29,7 +29,16 @@ class SuperLotto638ViewHolder(itemView: View) : BaseLottoResultViewHolder(itemVi
                 value.setTextColor(Color.BLACK)
                 value.textSize = 20f
 
-                if (targetNumber != null) {
+                if (targetNumber != null && targetNumber is SuperLotto638OpenedNumber) {
+                    when {
+                        targetNumber.isNumberMatch(number) -> {
+                            value.setTextColor(Color.CYAN)
+                        }
+                        else -> {
+                            value.setTextColor(Color.BLACK)
+                        }
+                    }
+                } else {
                     value.setTextColor(Color.BLACK)
                 }
 
